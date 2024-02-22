@@ -71,3 +71,28 @@ function bigNumLaw2(list, m, k) {
 }
 
 console.log("big num law2", bigNumLaw2(bigNumList, 8, 3));
+
+// 숫자 카드 게임
+const cardGameList = [
+  [3, 1, 2],
+  [4, 1, 4],
+  [2, 2, 2],
+];
+const cardGameList2 = [
+  [7, 3, 1, 8],
+  [3, 3, 3, 4],
+];
+
+/**
+ * 숫자 카드 게임 (나의 풀이)
+ * @param {number[][]} list 숫자들의 리스트
+ */
+function cardGame(list) {
+  console.time("cardGame");
+  const minList = list.map((arr) => Math.min(...arr));
+  console.timeEnd("cardGame");
+  return Math.max(...minList);
+}
+
+console.log("card game", cardGame(cardGameList));
+console.log("card game2", cardGame(cardGameList2));
