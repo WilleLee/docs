@@ -22,13 +22,6 @@ console.log("change count for 1260", change(1260)); // 6
 // 큰 수의 법칙
 const bigNumList = [2, 4, 5, 4, 6];
 
-/**
- * 큰 수의 법칙 (나의 풀이)
- * @param {number[]} list 숫자들의 리스트
- * @param {number} m 숫자가 더해지는 횟수
- * @param {number} k 연속해서 더할 수 있는 횟수
- * @return {number} 큰 수의 법칙에 따라 더해진 답
- */
 function bigNumLaw(list: number[], m: number, k: number) {
   console.time("bigNumLaw");
   const [first, second] = list.sort((a, b) => b - a);
@@ -50,13 +43,6 @@ function bigNumLaw(list: number[], m: number, k: number) {
 
 console.log("big num law", bigNumLaw(bigNumList, 8, 3));
 
-/**
- * 큰 수의 법칙 (성능을 고려한 풀이)
- * @param {number[]} list 숫자들의 리스트
- * @param {number} m 숫자가 더해지는 횟수
- * @param {number} k 연속해서 더할 수 있는 횟수
- * @return {number} 큰 수의 법칙에 따라 더해진 답
- */
 function bigNumLaw2(list: number[], m: number, k: number) {
   console.time("bigNumLaw2");
   const [first, second] = list.sort((a, b) => b - a);
@@ -83,10 +69,6 @@ const cardGameList2 = [
   [3, 3, 3, 4],
 ];
 
-/**
- * 숫자 카드 게임 (나의 풀이)
- * @param {number[][]} list 숫자들의 리스트
- */
 function cardGame(list: number[][]) {
   console.time("cardGame");
   const minList = list.map((arr) => Math.min(...arr));
@@ -99,11 +81,6 @@ console.log("card game2", cardGame(cardGameList2));
 
 // 1이 될 때까지
 
-/**
- * 1이 될 때까지 (나의 풀이)
- * @param {number} n
- * @param {number} k
- */
 function untilOne(n: number, k: number) {
   console.time("untilOne");
   let count = 0;
