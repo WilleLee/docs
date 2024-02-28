@@ -223,6 +223,7 @@ console.log(selectBalls(balls, maxWeight));
 console.log(selectBalls(balls2, maxWeight2));
 
 // 무지의 먹방 라이브
+// 효율성 테스트 실패
 function muzi(food_times: number[], k: number) {
   if (k < food_times.length) {
     return k + 1;
