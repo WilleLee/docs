@@ -101,6 +101,7 @@ console.log("until one", untilOne(25, 5));
 // 모험가 길드
 const adventureList = [2, 3, 1, 2, 2];
 
+// O(nlogn)
 function adventureGuild(list: number[]) {
   console.time("adventureGuild");
   list.sort((a, b) => a - b); // [1, 2, 2, 2, 3]
@@ -125,6 +126,7 @@ const numStr = "02984";
 const numStr2 = "567";
 
 // 0이나 1이 아니면 곱하면 되지 않나?
+// O(n)
 function multiplyOrAdd(str: string) {
   console.time("multiplyOrAdd");
   let result = Number(str[0]);
@@ -159,6 +161,7 @@ function reverseString(str: string) {
 
 console.log(reverseString(reverseStr));
 
+// O(n)
 function reverseString2(str: string) {
   console.time("reverseString2");
   if (str.length === 1) return 0;
@@ -183,6 +186,7 @@ console.log(reverseString2(reverseStr));
 // 만들 수 없는 금액
 const coins = [3, 2, 1, 1, 9];
 
+// O(nlogn)
 function impossibleAmount(list: number[]) {
   console.time("impossibleAmount");
   let result = 1;
@@ -207,6 +211,7 @@ const maxWeight = 3;
 const balls2 = [1, 5, 4, 3, 2, 4, 5, 2];
 const maxWeight2 = 5;
 
+// O(n^2)
 function selectBalls(list: number[], m: number) {
   let count = 0;
 
@@ -223,7 +228,7 @@ console.log(selectBalls(balls, maxWeight));
 console.log(selectBalls(balls2, maxWeight2));
 
 // 무지의 먹방 라이브
-// 효율성 테스트 실패
+// 효율성 테스트 실패, O(n)
 function muzi(food_times: number[], k: number) {
   if (k < food_times.length) {
     return k + 1;

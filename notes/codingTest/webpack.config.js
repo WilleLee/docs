@@ -4,7 +4,7 @@ module.exports = {
   mode: "development",
   devtool: "eval-source-map",
   // which file to compile
-  entry: "./src/greedy.ts",
+  entry: "./src/implementation.ts",
   // what to do with the file
   module: {
     rules: [
