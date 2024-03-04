@@ -4,7 +4,7 @@ module.exports = {
   mode: "development",
   devtool: "eval-source-map",
   // which file to compile
-  entry: "./src/implementation.ts",
+  entry: "./src/dfs_bfs.ts",
   // what to do with the file
   module: {
     rules: [
