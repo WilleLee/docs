@@ -14,8 +14,8 @@ const exGraph = [
 
 const dfsExVisited: boolean[] = Array(exGraph.length).fill(false);
 
-console.log("exGraph", exGraph);
-console.log("dfsExVisited", dfsExVisited);
+// console.log("exGraph", exGraph);
+// console.log("dfsExVisited", dfsExVisited);
 
 function dfs(graph: number[][], v: number, visited: boolean[]) {
   visited[v] = true; // 현재 노드 방문 처리
@@ -28,7 +28,7 @@ function dfs(graph: number[][], v: number, visited: boolean[]) {
   }
 }
 
-dfs(exGraph, 1, dfsExVisited);
+// dfs(exGraph, 1, dfsExVisited);
 
 const bfsExVisited: boolean[] = Array(exGraph.length).fill(false);
 
@@ -51,7 +51,7 @@ function bfs(graph: number[][], start: number, visited: boolean[]) {
   }
 }
 
-bfs(exGraph, 1, bfsExVisited);
+// bfs(exGraph, 1, bfsExVisited);
 
 // 음료수 얼려 먹기
 
@@ -61,3 +61,36 @@ const iceGraph = [
   [1, 1, 1, 1, 1],
   [0, 0, 0, 0, 0],
 ];
+
+function makeIcecreams(graph: number[][]) {
+  function dfsIce(x: number, y: number) {
+    if (x <= -1 || x >= graph.length || y <= -1 || y >= graph[0].length) {
+      return false;
+    }
+
+    if (graph[x][y] === 0) {
+      graph[x][y] = 1;
+      dfsIce(x - 1, y);
+      dfsIce(x + 1, y);
+      dfsIce(x, y - 1);
+      dfsIce(x, y + 1);
+      return true;
+    }
+
+    return false;
+  }
+
+  let result = 0;
+
+  for (let i = 0; i < graph.length; i++) {
+    for (let j = 0; j < graph[i].length; j++) {
+      if (dfsIce(i, j)) {
+        result += 1;
+      }
+    }
+  }
+
+  return result;
+}
+
+console.log(makeIcecreams(iceGraph));
