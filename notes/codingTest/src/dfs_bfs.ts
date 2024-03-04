@@ -94,3 +94,45 @@ function makeIcecreams(graph: number[][]) {
 }
 
 console.log(makeIcecreams(iceGraph));
+
+// 미로 탈출
+
+const mazeGraph = [
+  [1, 0, 1, 0, 1, 0],
+  [1, 1, 1, 1, 1, 1],
+  [0, 0, 0, 0, 0, 1],
+  [1, 1, 1, 1, 1, 1],
+  [1, 1, 1, 1, 1, 1],
+];
+
+function escapeMaze(graph: number[][]) {
+  const queue: [number, number][] = [[0, 0]];
+
+  while (queue.length > 0) {
+    const [x, y] = queue.shift() as [number, number];
+
+    const trials = [
+      [x - 1, y],
+      [x + 1, y],
+      [x, y - 1],
+      [x, y + 1],
+    ];
+    for (let i = 0; i < trials.length; i++) {
+      const [nx, ny] = trials[i];
+      if (nx < 0 || ny < 0 || nx >= graph.length || ny >= graph[0].length) {
+        continue;
+      }
+      if (graph[nx][ny] === 0) {
+        continue;
+      }
+      if (graph[nx][ny] === 1) {
+        graph[nx][ny] += graph[x][y];
+        queue.push([nx, ny]);
+      }
+    }
+  }
+
+  return graph[graph.length - 1][graph[0].length - 1];
+}
+
+console.log(escapeMaze(mazeGraph));
