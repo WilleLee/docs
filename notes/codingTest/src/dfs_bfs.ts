@@ -104,6 +104,15 @@ const mazeGraph = [
   [1, 1, 1, 1, 1, 1],
   [1, 1, 1, 1, 1, 1],
 ];
+const mazeGraph2 = [
+  [1, 1, 1, 1, 1, 1],
+  [1, 1, 1, 1, 1, 1],
+  [1, 1, 1, 1, 1, 1],
+  [1, 1, 1, 1, 1, 1],
+  [1, 1, 1, 1, 1, 1],
+  [1, 1, 1, 1, 1, 1],
+  [1, 1, 1, 1, 1, 1],
+];
 
 function escapeMaze(graph: number[][]) {
   const queue: [number, number][] = [[0, 0]];
@@ -136,3 +145,74 @@ function escapeMaze(graph: number[][]) {
 }
 
 console.log(escapeMaze(mazeGraph));
+console.log(escapeMaze(mazeGraph2));
+
+// 백준 1260 DFS와 BFS
+
+const adjList = [
+  [1, 2],
+  [1, 3],
+  [1, 4],
+  [2, 4],
+  [3, 4],
+];
+
+function dfsBfs(n: number, list: number[][], v: number) {
+  // n = 정점의 개수
+  // v = 시작 정점
+  const dfs: number[] = [];
+  const bfs: number[] = [];
+
+  // [ [], [3, 4], [4], [1, 4], [1, 2, 3]  ]
+  const newArray: number[][] = Array(n + 1).fill([]);
+  console.log(newArray);
+  for (let i = 0; i < list.length; i++) {
+    const [a, b] = list[i];
+    newArray[a] = [...newArray[a], b];
+    newArray[b] = [...newArray[b], a];
+  }
+  console.log(newArray);
+
+  const dfsVisited = Array(n + 1).fill(false);
+
+  function _dfs(start: number) {
+    dfsVisited[start] = true;
+    dfs.push(start);
+    console.log(`dfs ${start} 방문`);
+
+    for (let i = 0; i < newArray[start].length; i++) {
+      if (!dfsVisited[newArray[start][i]]) {
+        _dfs(newArray[start][i]);
+      }
+    }
+  }
+
+  _dfs(v);
+
+  const bfsVisited = Array(n + 1).fill(false);
+
+  function _bfs(start: number) {
+    const queue: number[] = [start];
+
+    bfsVisited[start] = true;
+
+    while (queue.length > 0) {
+      const a = queue.shift() as number;
+      bfs.push(a);
+      console.log(`bfs ${a} 방문`);
+
+      for (let i = 0; i < newArray[a].length; i++) {
+        if (!bfsVisited[newArray[a][i]]) {
+          queue.push(newArray[a][i]);
+          bfsVisited[newArray[a][i]] = true;
+        }
+      }
+    }
+  }
+
+  _bfs(v);
+
+  return `${dfs.join(" ")}\n${bfs.join(" ")}`;
+}
+
+console.log(dfsBfs(4, adjList, 1));
