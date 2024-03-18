@@ -10,40 +10,44 @@ const graph: number[][] = [
   [1, 7],
 ];
 
-const visited: boolean[] = Array(graph.length).fill(false);
+// dfs는 스택, bfs는 큐
 
-function dfs_(g: number[][], i: number, v: boolean[]) {
-  v[i] = true;
-  console.log(i, "방문");
+// dfs
 
-  for (let j = 0; j < g[i].length; j++) {
-    if (!v[g[i][j]]) {
-      dfs_(g, g[i][j], v);
+const visitedDfs = Array(graph.length).fill(false);
+
+function dfs_(g: number[][], v: number, visited: boolean[]) {
+  visited[v] = true;
+  console.log(v, "방문!");
+
+  for (let i = 0; i < g[v].length; i++) {
+    if (!visited[g[v][i]]) {
+      dfs_(g, g[v][i], visited);
     }
   }
 }
 
-dfs_(graph, 1, visited);
+dfs_(graph, 1, visitedDfs);
 
-const visited2: boolean[] = Array(graph.length).fill(false);
+// bfs
 
-function bfs_(g: number[][], i: number, v: boolean[]) {
-  const queue: number[] = [];
-  queue.push(i);
-  // v[i] = true;
-  // console.log(i, "방문");
+const visitedBfs = Array(graph.length).fill(false);
 
-  while (queue) {
-    const x = queue.shift() as number;
+function bfs_(g: number[][], v: number, visited: boolean[]) {
+  const queue: number[] = [v];
+  visited[v] = true;
 
-    if (!v[x]) {
-      v[x] = true;
-      console.log(x, "방문");
-      for (let j = 0; j < g[x].length; j++) {
-        queue.push(g[x][j]);
+  while (queue.length > 0) {
+    const index = queue.shift() as number;
+    console.log(index, "방문!");
+
+    for (let i = 0; i < g[index].length; i++) {
+      if (!visited[g[index][i]]) {
+        queue.push(g[index][i]);
+        visited[g[index][i]] = true;
       }
     }
   }
 }
 
-bfs_(graph, 1, visited2);
+bfs_(graph, 1, visitedBfs);
