@@ -19,6 +19,25 @@ console.log(arr1);
 
 // insertion sort
 
+const arr2 = [7, 5, 9, 0, 3, 1, 6, 2, 4, 8];
+
+console.time("insertion sort");
+for (let i = 1; i < arr2.length; i++) {
+  for (let j = i; j > 0; j--) {
+    if (arr2[j] < arr2[j - 1]) {
+      // 앞으로 이동
+      const temp = arr2[j];
+      arr2[j] = arr2[j - 1];
+      arr2[j - 1] = temp;
+    } else {
+      break; // 다음 i로 넘어감
+    }
+  }
+}
+console.timeEnd("insertion sort");
+
+console.log(arr2); // [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
 // quick sort
 
 const arr3 = [5, 7, 9, 0, 3, 1, 6, 2, 4, 8];
@@ -52,7 +71,6 @@ console.time("quick sort");
 quickSort(arr3, 0, arr3.length - 1);
 console.timeEnd("quick sort");
 console.log(arr3);
-
 // count sort
 
 const arr4 = [7, 5, 9, 0, 3, 1, 6, 2, 9, 1, 4, 8, 0, 5, 2];
@@ -107,3 +125,42 @@ function lowToHighStudents(arr: string[]) {
 }
 
 console.log(lowToHighStudents(studentsEx));
+
+// 두 배열의 원소 교체
+const _a = [1, 2, 5, 4, 3];
+const _b = [5, 5, 6, 6, 5];
+const _k = 3;
+
+// 최대 k번 바꿔치기 가능
+// a의 원소의 합이 최대가 되도록
+function changeElems(a: number[], b: number[], k: number) {
+  console.log("change elems");
+  let count = 0;
+
+  // a는 오름차순, b는 내림차순
+  a.sort((a, b) => a - b);
+  b.sort((a, b) => b - a);
+  console.log("a", a);
+  console.log("b", b);
+
+  for (let i = 0; i < a.length; i++) {
+    if (count >= k) break;
+
+    if (a[i] < b[i]) {
+      const min = a[i];
+      a[i] = b[i];
+      b[i] = min;
+    } else {
+      break;
+    }
+
+    count++;
+  }
+
+  console.log("a", a);
+  console.log("b", b);
+
+  return a.reduce((prev, curr) => prev + curr, 0);
+}
+
+console.log(changeElems(_a, _b, _k)); // 26
