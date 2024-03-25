@@ -4,7 +4,7 @@ module.exports = {
   mode: "development",
   devtool: "eval-source-map",
   // which file to compile
-  entry: "./src/binary_search.ts",
+  entry: "./src/dynamic_programming.ts",
   // what to do with the file
   module: {
     rules: [
