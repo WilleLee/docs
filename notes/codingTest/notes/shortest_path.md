@@ -70,6 +70,8 @@
 
 #### 간단한 다익스트라 알고리즘 구현 - O(V<sup>2</sup>)
 
+> V: 노드의 개수, E: 간선의 개수
+
 1. 각 노드에 대한 최단 거리를 담는 1차원 리스트를 선언한다.
 2. 이후 단계마다 '방문하지 않은 노드 중에서 최단 거리가 가장 짧은 노드를 선택'하기 위해 매 단계마다 1차원 리스트의 모든 원소를 확인(순차 탐색)한다.
 
@@ -153,4 +155,97 @@ for (let i = 1; i <= V; i++) {
     console.log(distance[i]);
   }
 }
+```
+
+#### 개선된 다익스트라 알고리즘 구현 - O(E*log*V)
+
+- 개선된 다익스트라 알고리즘은 특정 노드까지의 최단 거리에 대한 정보를 힙(Heap) 자료구조에 담아 처리한다.
+- 최단 거리를 저장하기 위한 1차원 리스트는 그대로 사용하지만, 현재 가장 가까운 노드를 저장하기 위해 우선순위 큐를 사용한다.
+
+> **힙 자료구조**
+>
+> | 자료구조    | 추출되는 데이터             |
+> | ----------- | --------------------------- |
+> | 스택        | 가장 나중에 삽입된 데이터   |
+> | 큐          | 가장 먼저 삽입된 데이터     |
+> | 우선순위 큐 | 가장 우선순위가 높은 데이터 |
+
+- 힙은 우선순위 큐를 구현하기 위해 사용하는 자료구조 중 하나로, 최소 힙과 최대 힙이 있다.
+
+```typescript
+// [distance, node]
+class PriorityQueue {
+  consturctor() {
+    this.queue = [];
+  }
+  add([distance, node]) {
+    this.queue.push([distance, node]);
+    this.queue.sort((a, b) => a[0] - b[0]);
+  }
+  pop() {
+    return this.queue.shift();
+  }
+  size() {
+    return this.queue.length;
+  }
+}
+
+const INF = Infinity;
+
+const graph = [
+  [],
+  [
+    [2, 2],
+    [3, 5],
+    [4, 1],
+  ],
+  [
+    [3, 3],
+    [4, 2],
+  ],
+  [
+    [2, 3],
+    [6, 5],
+  ],
+  [
+    [3, 3],
+    [5, 1],
+  ],
+  [
+    [3, 1],
+    [6, 2],
+  ],
+  [],
+];
+
+const V = graph.length - 1;
+const distances = Array(V + 1).fill(INF);
+
+function dijkstra(start: number) {
+  const queue = new PriorityQueue();
+
+  // 시작 노드 초기화
+  queue.add([0, start]);
+  distances[start] = 0;
+
+  while (queue.size() > 0) {
+    // 가장 최단 거리가 짧은 노드에 대한 정보 꺼내기
+    const [d, now] = queue.pop();
+    // 현재 노드가 이미 처리된 적이 있는 노드라면 무시
+    if (distances[now] < d) {
+      continue;
+    }
+    // 현재 노드와 연결된 다른 인접한 노드들을 확인
+    for (let i = 0; i < graph[now].length; i++) {
+      const [n, d] = graph[now][i];
+      const cost = d + distances[now];
+      if (cost < distances[n]) {
+        distances[n] = cost;
+        queue.add([cost, n]);
+      }
+    }
+  }
+}
+
+dijkstra(1);
 ```

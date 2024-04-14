@@ -85,3 +85,58 @@ for (let i = 1; i <= V; i++) {
     console.log(i, distance1[i]);
   }
 }
+
+class PriorityQueue {
+  queue: [number, number][];
+  constructor() {
+    this.queue = [];
+  }
+  add([distance, node]: [number, number]) {
+    this.queue.push([distance, node]);
+    this.queue.sort((a, b) => a[0] - b[0]);
+  }
+  pop() {
+    return this.queue.shift();
+  }
+  size() {
+    return this.queue.length;
+  }
+}
+
+const distance2 = Array(V + 1).fill(INF);
+
+function advancedDijkstra(start: number) {
+  const queue = new PriorityQueue();
+
+  queue.add([0, start]);
+  distance2[start] = 0;
+
+  while (queue.size() > 0) {
+    const [dist, now] = queue.pop() as [number, number];
+
+    if (distance2[now] < dist) {
+      continue;
+    }
+
+    for (let i = 0; i < graph[now].length; i++) {
+      const [n, d] = graph[now][i];
+      const cost = dist + d;
+      if (cost < distance2[n]) {
+        distance2[n] = cost;
+        queue.add([cost, n]);
+      }
+    }
+  }
+}
+
+console.time("advancedDijkstra");
+advancedDijkstra(S);
+console.timeEnd("advancedDijkstra");
+
+for (let i = 1; i <= V; i++) {
+  if (distance2[i] === INF) {
+    console.log("도달할 수 없습니다.");
+  } else {
+    console.log(i, distance2[i]);
+  }
+}
