@@ -4,7 +4,7 @@ module.exports = {
   mode: "development",
   devtool: "eval-source-map",
   // which file to compile
-  entry: "./src/dynamic_programming.ts",
+  entry: "./src/shortest_path.ts",
   // what to do with the file
   module: {
     rules: [
