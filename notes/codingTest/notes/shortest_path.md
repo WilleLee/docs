@@ -16,7 +16,7 @@
 4. 해당 노드를 거쳐 다른 노드로 가는 비용을 계산하여 최단 거리 테이블 갱신
 5. 위 과정에서 3, 4번을 반복
 
-다익스트라 알고리즘은 '각 노드에 대한 현재까지의 최단 거리' 정보를 항상 1차원 리스트에 저장하며, 리스트를 계속 갱신한다.
+다익스트라 알고리즘은 '각 노드에 대한 현재까지의 최단 거리' 정보를 항상 1차원 리스트에 저장하며, 리스트를 계속 갱신한다. 매번 현재 처리 중인 노드와 인접한 노드로 도달하는 더 짧은 경로를 찾으면 '더 짧은 경로도 있었네?'라고 판단하는 것이다.
 
 ### 다익스트라 알고리즘 구현
 
@@ -68,4 +68,89 @@
 | ---- | --- | --- | --- | --- | --- | --- |
 | 거리 | 0   | 2   | 3   | 1   | 2   | 4   |
 
-#### 간단한 다익스트라 알고리즘 구현
+#### 간단한 다익스트라 알고리즘 구현 - O(V<sup>2</sup>)
+
+1. 각 노드에 대한 최단 거리를 담는 1차원 리스트를 선언한다.
+2. 이후 단계마다 '방문하지 않은 노드 중에서 최단 거리가 가장 짧은 노드를 선택'하기 위해 매 단계마다 1차원 리스트의 모든 원소를 확인(순차 탐색)한다.
+
+```typescript
+const INF = Infinity;
+
+const graph = [
+  [],
+  [
+    [2, 2],
+    [3, 5],
+    [4, 1],
+  ], // 1번 노드에서 2로 가는 비용 = 2, 3으로 가는 비용 = 5 ...
+  [
+    [3, 3],
+    [4, 2],
+  ],
+  [
+    [2, 3],
+    [6, 5],
+  ],
+  [
+    [3, 3],
+    [5, 1],
+  ],
+  [
+    [3, 1],
+    [6, 2],
+  ],
+  [],
+];
+// 노드의 개수(V) = graph.length - 1
+const V = graph.length - 1; // 노드 개수
+const visited = Array(graph.length).fill(false);
+const distance = Array(graph.length).fill(INF);
+
+function getSmallestNode() {
+  let min = INF;
+  let index = 0; // 가장 최단 거리가 짧은 노드(인덱스)
+  for (let i = 1; i <= V; i++) {
+    if (distance[i] < min && !visited[i]) {
+      min = distance[i];
+      index = i;
+    }
+  }
+  return index;
+}
+
+function dijkstra(start: number) {
+  // 시작 노드 초기화
+  distance[start] = 0;
+  visited[start] = true;
+  for (let i = 0; i < graph[start].length; i++) {
+    const [n, d] = graph[start][i];
+    distance[n] = d;
+  }
+  // 시작 노드를 제외한 전체 노드에 대해 반복
+  for (let i = 0; i < V - 1; i++) {
+    // 현재 최단 거리가 가장 짧은 노드를 꺼내서 방문 처리
+    const now = getSmallestNode();
+    visited[now] = true;
+    // 현재 노드와 연결된 다른 노드를 확인
+    for (let j = 0; j < graph[now].length; j++) {
+      const [n, d] = graph[now][j];
+      const cost = distance[now] + d;
+      // 현재 노드를 거쳐서 다른 노드로 이동하는 거리가 더 짧은 경우
+      if (cost < distance[n]) {
+        distance[n] = cost;
+      }
+    }
+  }
+}
+
+dijkstra(1);
+
+// 모든 노드로 가기 위한 최단 거리 출력
+for (let i = 1; i <= V; i++) {
+  if (distance[i] === INF) {
+    console.log("INFINITY"); // 도달할 수 없는 경우
+  } else {
+    console.log(distance[i]);
+  }
+}
+```
