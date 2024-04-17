@@ -257,3 +257,55 @@ dijkstra(1);
 - 다만 매 단계마다 방문하지 않은 노드 중에 최단 거리를 갖는 노드를 찾는 과정이 필요하지 않다.
 - 2차원 테이블에 최단 거리 정보를 저장한다.
 - _D<sub>ab</sub>_ = _min(D<sub>ab</sub>, D<sub>ak</sub> + D<sub>kb</sub>)_, 즉 'a에서 b로 가는 최소 비용'과 'a에서 k를 거쳐 b로 가는 비용'을 비교하여 더 작은 값으로 갱신한다.
+
+![floyd-warshall examplar graph](https://github.com/WilleLee/docs/blob/main/assets/floyd_warshall_example.jpg?raw=true)
+
+- 우선 '연결된 간선'은 단순히 그 값을 채워넣고, 연결되지 않은 간선은 무한으로 채워넣는다.
+
+| 출발\도착 | 1번 | 2번 | 3번 | 4번 |
+| --------- | --- | --- | --- | --- |
+| 1번       | 0   | 4   | INF | 6   |
+| 2번       | 3   | 0   | 7   | INF |
+| 3번       | 5   | INF | 0   | 4   |
+| 4번       | INF | INF | 2   | 0   |
+
+```typescript
+const INF = Infinity;
+
+const N = 4; // 노드의 개수
+const inputs = [
+  [1, 2, 4],
+  [1, 4, 6],
+  [2, 1, 3],
+  [2, 3, 7],
+  [3, 1, 5],
+  [3, 4, 4],
+];
+
+// 2차원 그래프 생성
+const graph = Array(N + 1).fill(Array(N + 1).fill(INF));
+
+// 자기 자신으로 가는 비용은 0으로 초기화
+for (let i = 1; i <= N; i++) {
+  for (let j = 1; j <= N; j++) {
+    if (i === j) {
+      graph[i][j] = 0;
+    }
+  }
+}
+
+// 입력 받은 간선 정보에 기반하여 그래프 초기화
+for (let i = 0; i < inputs.length; i++) {
+  const [a, b, c] = inputs[i];
+  graph[a][b] = c;
+}
+
+// 플로이드 워셜 알고리즘 수행
+for (let k = 1; k <= N; k++) {
+  for (let a = 1; a <= N; a++) {
+    for (let b = 1; b <= N; b++) {
+      graph[a][b] = Math.min(graph[a][b], graph[a][k] + graph[k][b]);
+    }
+  }
+}
+```
