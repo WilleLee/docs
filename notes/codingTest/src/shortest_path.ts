@@ -86,6 +86,8 @@ for (let i = 1; i <= V; i++) {
   }
 }
 
+// 0.116ms
+/*
 class PriorityQueue {
   queue: [number, number][];
   constructor() {
@@ -100,6 +102,87 @@ class PriorityQueue {
   }
   size() {
     return this.queue.length;
+  }
+}
+*/
+
+// 0.210ms
+class PriorityQueue {
+  queue: [number, number][]; // [distance, node]
+
+  constructor() {
+    this.queue = [];
+  }
+
+  size() {
+    return this.queue.length;
+  }
+
+  swap(index1: number, index2: number) {
+    [this.queue[index1], this.queue[index2]] = [
+      this.queue[index2],
+      this.queue[index1],
+    ];
+  }
+
+  add([distance, node]: [number, number]) {
+    this.queue.push([distance, node]);
+    this.heapifyUp();
+  }
+
+  heapifyUp() {
+    let index = this.queue.length - 1; // 새로운 노드의 위치
+    let parentIndex = Math.floor((index - 1) / 2); // 새로운 노드의 부모 노드의 위치
+
+    while (
+      this.queue[parentIndex] &&
+      this.queue[parentIndex][0] > this.queue[index][0]
+    ) {
+      this.swap(index, parentIndex);
+      index = parentIndex;
+      parentIndex = Math.floor((index - 1) / 2);
+    }
+  }
+
+  pop() {
+    if (this.queue.length === 0) {
+      return;
+    }
+
+    if (this.queue.length === 1) {
+      return this.queue.shift();
+    }
+
+    const value = this.queue[0];
+    this.queue[0] = this.queue.pop() as [number, number];
+    this.heapifyDown();
+    return value;
+  }
+
+  heapifyDown() {
+    let index = 0;
+    let leftIndex = index * 2 + 1;
+    let rightIndex = index * 2 + 2;
+
+    while (
+      (this.queue[leftIndex] &&
+        this.queue[leftIndex][0] < this.queue[index][0]) ||
+      (this.queue[rightIndex] &&
+        this.queue[rightIndex][0] < this.queue[index][0])
+    ) {
+      let smallerIndex = leftIndex;
+      if (
+        this.queue[rightIndex] &&
+        this.queue[rightIndex][0] < this.queue[leftIndex][0]
+      ) {
+        smallerIndex = rightIndex;
+      }
+
+      this.swap(index, smallerIndex);
+      index = smallerIndex;
+      leftIndex = index * 2 + 1;
+      rightIndex = index * 2 + 2;
+    }
   }
 }
 

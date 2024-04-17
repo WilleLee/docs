@@ -175,7 +175,7 @@ for (let i = 1; i <= V; i++) {
 ```typescript
 // [distance, node]
 class PriorityQueue {
-  consturctor() {
+  constructor() {
     this.queue = [];
   }
   add([distance, node]) {
