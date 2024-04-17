@@ -223,3 +223,64 @@ for (let i = 1; i <= V; i++) {
     console.log(i, distance2[i]);
   }
 }
+
+// 미래 도시
+
+// 1번 -> K번 최단 거리
+// K번 -> X번 최단 거리
+
+const inputs: [number, number][] = [
+  [1, 2],
+  [1, 3],
+  [1, 4],
+  [2, 4],
+  [3, 4],
+  [3, 5],
+  [4, 5],
+  [4, 6],
+];
+const X = 4;
+const K = 5;
+
+function futureCity(inp: [number, number][], middle: number, end: number) {
+  const cityGraph = Array(101).fill([]);
+  for (let i = 0; i < inp.length; i++) {
+    const [a, b] = inp[i];
+    cityGraph[a] = [...cityGraph[a], b];
+    cityGraph[b] = [...cityGraph[b], a];
+  }
+
+  const fromStart = dij(1, cityGraph);
+  const fromMiddle = dij(middle, cityGraph);
+
+  return fromStart[middle] + fromMiddle[end];
+}
+
+function dij(start: number, gr: number[][]) {
+  const dists = Array(101).fill(INF);
+  const queue = new PriorityQueue();
+  queue.add([0, start]);
+  dists[start] = 0;
+
+  while (queue.size() > 0) {
+    const [dist, now] = queue.pop() as [number, number];
+
+    if (dists[now] < dist) {
+      continue;
+    }
+
+    for (let i = 0; i < gr[now].length; i++) {
+      const next = gr[now][i];
+      const cost = dist + 1;
+      if (cost < dists[next]) {
+        dists[next] = cost;
+        queue.add([cost, next]);
+      }
+    }
+  }
+  return dists;
+}
+
+console.time("futureCity");
+console.log(futureCity(inputs, K, X));
+console.timeEnd("futureCity");
