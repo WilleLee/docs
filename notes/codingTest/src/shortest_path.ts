@@ -195,12 +195,15 @@ function advancedDijkstra(start: number) {
   distance2[start] = 0;
 
   while (queue.size() > 0) {
+    // 가장 최단 거리가 짧은 노드에 대한 정보 꺼내기
     const [dist, now] = queue.pop() as [number, number];
 
+    // 이미 처리된 노드 무시
     if (distance2[now] < dist) {
       continue;
     }
 
+    // 현재 노드와 연결된 다른 인접한 노드들을 확인
     for (let i = 0; i < graph[now].length; i++) {
       const [n, d] = graph[now][i];
       const cost = dist + d;
@@ -223,6 +226,51 @@ for (let i = 1; i <= V; i++) {
     console.log(i, distance2[i]);
   }
 }
+
+// floyd-warshall
+// const fwNodes = 4;
+const fwInputs: [number, number, number][] = [
+  [1, 2, 4],
+  [1, 4, 6],
+  [2, 1, 3],
+  [2, 3, 7],
+  [3, 1, 5],
+  [3, 4, 4],
+  [4, 3, 2],
+];
+
+function fw(nodes: number, inputs: [number, number, number][]) {
+  const fwGraph = Array(nodes + 1)
+    .fill([])
+    .map(() => Array(nodes + 1).fill(INF));
+
+  for (let a = 1; a <= nodes; a++) {
+    for (let b = 1; b <= nodes; b++) {
+      if (a === b) {
+        fwGraph[a][b] = 0;
+      }
+    }
+  }
+
+  for (let i = 0; i < inputs.length; i++) {
+    const [a, b, c] = inputs[i];
+    fwGraph[a][b] = c;
+  }
+
+  for (let k = 1; k <= nodes; k++) {
+    for (let a = 1; a <= nodes; a++) {
+      for (let b = 1; b <= nodes; b++) {
+        fwGraph[a][b] = Math.min(fwGraph[a][b], fwGraph[a][k] + fwGraph[k][b]);
+      }
+    }
+  }
+
+  return fwGraph;
+}
+
+console.time("fw");
+console.log("fw result", fw(4, fwInputs));
+console.timeEnd("fw");
 
 // 미래 도시
 
