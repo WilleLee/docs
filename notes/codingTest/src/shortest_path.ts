@@ -287,6 +287,7 @@ const inputs: [number, number][] = [
   [4, 5],
   [4, 6],
 ];
+const N = 6;
 const X = 4;
 const K = 5;
 
@@ -329,6 +330,45 @@ function dij(start: number, gr: number[][]) {
   return dists;
 }
 
+function futureCityFw(
+  inp: [number, number][],
+  nodes: number,
+  middle: number,
+  end: number
+) {
+  const fwGraph = Array(nodes + 1)
+    .fill([])
+    .map(() => Array(nodes + 1).fill(INF));
+
+  for (let a = 1; a <= nodes; a++) {
+    for (let b = 1; b <= nodes; b++) {
+      if (a === b) {
+        fwGraph[a][b] = 0;
+      }
+    }
+  }
+
+  for (let i = 0; i < inp.length; i++) {
+    const [a, b] = inp[i];
+    fwGraph[a][b] = 1;
+    fwGraph[b][a] = 1;
+  }
+
+  for (let k = 1; k <= nodes; k++) {
+    for (let a = 1; a <= nodes; a++) {
+      for (let b = 1; b <= nodes; b++) {
+        fwGraph[a][b] = Math.min(fwGraph[a][b], fwGraph[a][k] + fwGraph[k][b]);
+      }
+    }
+  }
+
+  return fwGraph[1][middle] + fwGraph[middle][end];
+}
+
 console.time("futureCity");
 console.log(futureCity(inputs, K, X));
 console.timeEnd("futureCity");
+
+console.time("futureCityFw");
+console.log(futureCityFw(inputs, N, K, X));
+console.timeEnd("futureCityFw");
