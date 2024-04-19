@@ -146,3 +146,62 @@ function findRoot(parent: number[], x: number) {
   return parent[x];
 }
 ```
+
+#### 서로소 집합을 이용한 사이클 판별
+
+서로소 집합은 무방향 그래프 내에서의 사이클을 판별하는 데 사용 가능하다. 즉 간선을 하나씩 확인하면서 두 노드가 포함되어 있는 집합을 합치는 과정을 반복하여 사이클을 판별하는 것이다.
+
+1. 각 간선에 대하여 두 노드의 루트 노드를 확인한다.
+   1. 루트 노드가 서로 다르다면 두 노드에 대하여 union 연산을 수행한다.
+   2. 루트 노드가 서로 같다면 사이클이 발생한 것이다.
+2. 모든 간선에 대하여 1번 과정을 반복한다.
+
+```typescript
+const V = 3; // 노드의 개수
+const edges: [number, number][] = [
+  [1, 2],
+  [1, 3],
+  [2, 3],
+];
+
+const parentTable = Array.from({
+  length: V + 1,
+})
+  .fill(0)
+  .map((_, index) => index);
+
+function findRoot(parent: number[], x: number) {
+  if (parent[x] !== x) {
+    parent[x] = findRoot(parent, parent[x]);
+  }
+  return parent[x];
+}
+
+function union(parent: number[], a: number, b: number) {
+  const rootA = findRoot(parent, a);
+  const rootB = findRoot(parent, b);
+  if (rootA < rootB) {
+    parent[rootB] = rootA;
+  } else {
+    parent[rootA] = rootB;
+  }
+}
+
+let isCycle = false;
+
+for (let i = 0; i < edges.length; i++) {
+  const [a, b] = edges[i];
+  if (findRoot[a] === findRoot[b]) {
+    isCycle = true;
+    break;
+  } else {
+    union(parentTable, a, b);
+  }
+}
+
+if (isCycle) {
+  console.log("사이클이 발생했습니다.");
+} else {
+  console.log("사이클이 발생하지 않았습니다.");
+}
+```
