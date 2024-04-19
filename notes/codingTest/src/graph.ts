@@ -125,3 +125,55 @@ if (isCycle) {
 } else {
   console.log("사이클이 발생하지 않았습니다.");
 }
+
+// kruskal's algorithm
+const N = 7; // 노드의 개수
+const kruskalEdges: [number, number, number][] = [
+  [1, 2, 29],
+  [1, 5, 75],
+  [2, 3, 35],
+  [2, 6, 34],
+  [3, 4, 7],
+  [4, 6, 23],
+  [4, 7, 13],
+  [5, 6, 53],
+  [6, 7, 25],
+];
+
+kruskalEdges.sort((a, b) => a[2] - b[2]);
+
+const kruskalParent = Array.from({ length: N + 1 })
+  .fill(0)
+  .map((_, index) => index);
+
+function kruskalFindRoot(parent: number[], x: number) {
+  if (parent[x] !== x) {
+    parent[x] = kruskalFindRoot(parent, parent[x]);
+  }
+  return parent[x];
+}
+
+function kruskalUnion(parent: number[], a: number, b: number) {
+  const rootA = kruskalFindRoot(parent, a);
+  const rootB = kruskalFindRoot(parent, b);
+  if (rootA < rootB) {
+    parent[rootB] = rootA;
+  } else {
+    parent[rootA] = rootB;
+  }
+}
+
+console.time("kruskal");
+let kruskalTotalCost = 0;
+
+for (let i = 0; i < kruskalEdges.length; i++) {
+  const [a, b, cost] = kruskalEdges[i];
+  if (kruskalFindRoot(kruskalParent, a) !== kruskalFindRoot(kruskalParent, b)) {
+    kruskalTotalCost += cost;
+    kruskalUnion(kruskalParent, a, b);
+  }
+}
+
+console.log("kruskalParent", kruskalParent);
+console.log("kruskalTotalCost", kruskalTotalCost);
+console.timeEnd("kruskal");
