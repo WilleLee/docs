@@ -211,3 +211,8 @@ if (isCycle) {
 - 신장 트리는 **하나의 그래프가 있을 때 모든 노드를 포함하면서 사이클이 존재하지 않는 부분 그래프**를 의미한다.
 
 ### 크루스칼 알고리즘(Kruskal's Algorithm)
+
+![spanning tree example](https://github.com/WilleLee/docs/blob/main/assets/spanning_tree_example.jpeg?raw=true)
+
+- 위 그래프에서 최소 비용으로 신장 트리를 만든다고 가정해보자. 1, 2, 3 노드를 최소 비용으로 연결하면서 사이클이 발생하지 않도록 하는 시나리오는 두 번째 그림처럼 1-2, 2-3 간선을 선택하는 것이다.
+- 이처럼 신장 트리 중에서 최소 비용으로 만들 수 있는 신장 트리를 찾는 알고리즘을 **최소 신장 트리 알고리즘**이라고 하는데, **크루스칼 알고리즘(Kruskal's Algorithm)**은 대표적인 최소 신장 트리 알고리즘이다.
