@@ -453,3 +453,73 @@ console.log(totalCost);
 - 방향 그래프의 모든 노드를 '방향성에 거스르지 않도록 순서대로 나열하는 것'
 
 > 진입 차수(Indegree): 특정한 노드로 들어오는 간선의 개수
+
+![topology sort examplar graph](https://github.com/WilleLee/docs/blob/main/assets/topology_sort_example.jpeg?raw=true)
+
+위 방향 그래프는 과목 간 선수과목 관계를 나타내고 있다. 이때 위상 정렬을 수행하는 방법은 다음과 같다.
+
+1. 진입 차수가 0인 노드를 큐에 넣는다.
+2. 큐가 빌 때까지 다음의 과정을 반복한다.
+   1. 큐에서 원소를 꺼내 해당 노드에서 출발하는 간선을 그래프에서 제거한다.
+   2. 새롭게 진입 차수가 0이 된 노드를 큐에 넣는다.
+
+이때 모든 원소를 방문하기 전에(큐에서 원소가 V번 추출되기 전에) 큐가 빈다면 사이클이 존재한다고 판단할 수 있다.
+
+#### 위상 정렬 구현
+
+```typescript
+const V = 7; // 노드의 개수
+const edges: [number, number][] = [
+  [1, 2],
+  [1, 5],
+  [2, 3],
+  [2, 6],
+  [3, 4],
+  [4, 7],
+  [5, 6],
+  [6, 4],
+];
+
+// 각 노드에 연결된 간선 정보를 저장할 그래프 초기화
+const graph: [number][] = Array.from({
+  length: V + 1,
+}).fill([]);
+
+// 진입 차수 초기화
+const indegrees = Array.from({
+  length: V + 1,
+}).fill(0);
+
+// 간선 정보에 따라 그래프, 진입 차수 설정
+for (let i = 0; i < edges.length; i++) {
+  const [a, b] = edges[i];
+  graph[a] = [...graph[a], b];
+  edges[i] += 1;
+}
+
+function topologySort() {
+  const result: number[] = [];
+  const queue: number[] = [];
+
+  for (let i = 1; i <= V; i++) {
+    if (indegress[i] === 0) {
+      queue.push(i);
+    }
+  }
+
+  while (queue.length > 0) {
+    const now = queue.shift();
+    result.push(now);
+
+    for (let i = 0; i < graph[now].length; i++) {
+      const node = graph[now][i];
+      indegrees[node] -= 1;
+      if (indegrees[node] === 0) {
+        queue.push(node);
+      }
+    }
+  }
+
+  return result;
+}
+```

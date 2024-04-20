@@ -177,3 +177,56 @@ for (let i = 0; i < kruskalEdges.length; i++) {
 console.log("kruskalParent", kruskalParent);
 console.log("kruskalTotalCost", kruskalTotalCost);
 console.timeEnd("kruskal");
+
+// topology sort
+const topoNodes = 7; // 노드의 개수
+const topoEdges: [number, number][] = [
+  [1, 2],
+  [1, 5],
+  [2, 3],
+  [2, 6],
+  [3, 4],
+  [4, 7],
+  [5, 6],
+  [6, 4],
+];
+console.time("topologySort");
+const topoGraph: number[][] = Array(topoNodes + 1).fill([]);
+
+const topoIndegree: number[] = Array(topoNodes + 1).fill(0);
+
+for (let i = 0; i < topoEdges.length; i++) {
+  const [a, b] = topoEdges[i];
+  topoGraph[a] = [...topoGraph[a], b];
+  topoIndegree[b] += 1;
+}
+
+// console.log("topoGraph", topoGraph);
+// console.log("topoIndegree", topoIndegree);
+
+function topologySort() {
+  const result: number[] = [];
+  const queue: number[] = [];
+  for (let i = 1; i <= topoNodes; i++) {
+    if (topoIndegree[i] === 0) {
+      queue.push(i);
+    }
+  }
+  while (queue.length > 0) {
+    const now = queue.shift() as number;
+    result.push(now);
+
+    for (let i = 0; i < topoGraph[now].length; i++) {
+      const node = topoGraph[now][i];
+      topoIndegree[node] -= 1;
+      if (topoIndegree[node] === 0) {
+        queue.push(node);
+      }
+    }
+  }
+
+  return result;
+}
+
+console.log(topologySort());
+console.timeEnd("topologySort");
