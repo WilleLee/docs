@@ -447,3 +447,9 @@ for (let i = 0; i < edges.length; i++) {
 
 console.log(totalCost);
 ```
+
+### 위상 정렬(Topology Sort)
+
+- 방향 그래프의 모든 노드를 '방향성에 거스르지 않도록 순서대로 나열하는 것'
+
+> 진입 차수(Indegree): 특정한 노드로 들어오는 간선의 개수
