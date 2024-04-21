@@ -4,7 +4,7 @@ module.exports = {
   mode: "development",
   devtool: "eval-source-map",
   // which file to compile
-  entry: "./src/graph.ts",
+  entry: "./src/examples/graph.ts",
   // what to do with the file
   module: {
     rules: [
