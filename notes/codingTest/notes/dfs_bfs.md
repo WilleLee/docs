@@ -108,6 +108,36 @@ function dfs(gr: number[][], start: number, vs: boolean[]) {
 dfs();
 ```
 
+```typescript
+const V = 8;
+const graph: number[][] = [
+  [],
+  [2, 3, 8],
+  [1, 7],
+  [1, 4, 5],
+  [3, 5],
+  [3, 4],
+  [7],
+  [2, 6, 8],
+  [1, 7],
+];
+const visited = Array(V + 1).fill(false);
+
+function recurDfs(gr, node, vi) {
+  vi[node] = true;
+  console.log(`visited ${node}`);
+
+  for (let i = 0; i < gr[node].length; i++) {
+    const next = gr[node][i];
+    if (!vi[next]) {
+      recurDfs(gr, next, vi);
+    }
+  }
+}
+
+recurDfs(graph, 1, visited);
+```
+
 ## BFS (Breadth-First Search)
 
 - 너비 우선 탐색, 가까운 노드부터 탐색하는 알고리즘
@@ -117,6 +147,39 @@ BFS는 큐 자료구조를 이용하며, 구체적인 동작 과정은 다음과
 1. 탐색 시작 노드를 큐에 삽입하고 방문 처리를 한다.
 2. 큐에서 노드를 꺼내 해당 노드의 인접 노드 중에서 방문하지 않은 노드를 모두 큐에 삽입하고 방문 처리를 한다.
 3. 2번의 과정을 더 이상 수행할 수 없을 때까지 반복한다.
+
+```typescript
+const V = 8;
+const graph: number[][] = [
+  [],
+  [2, 3, 8],
+  [1, 7],
+  [1, 4, 5],
+  [3, 5],
+  [3, 4],
+  [7],
+  [2, 6, 8],
+  [1, 7],
+];
+const visited: boolean[] = Array(V + 1).fill(false);
+
+function dfs(gr, start, vi) {
+  const queue: number[] = [start];
+  vi[start] = true;
+
+  while (queue.length > 0) {
+    const now = queue.shift() as number;
+
+    for (let i = 0; i < gr[now].length; i++) {
+      const next = gr[now][i];
+      if (!vi[next]) {
+        vi[next] = true;
+        queue.push(next);
+      }
+    }
+  }
+}
+```
 
 ## Summary
 
