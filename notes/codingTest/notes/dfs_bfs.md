@@ -68,11 +68,45 @@
 
 DFS는 특정한 경로로 탐색하다가 특정한 상황에서 최대한 깊숙이 들어가서 노드를 방문한 후, 다시 돌아가 다른 경로로 탐색하는 알고리즘이다.
 
-DFS는 스택 자료구조를 이용하며, 구체적인 동작 과정은 다음과 같다.
+DFS는 **스택 자료구조**를 이용하며, 구체적인 동작 과정은 다음과 같다.
 
-1. 탐색 시작 노드를 스택에 삽입하고 방문 처리를 한다.
+1. 탐색 시작 노드를 스택에 삽입하고 **방문 처리**를 한다.
 2. 스택의 최상단 노드에 방문하지 않은 인접 노드가 있으면 그 인접 노드를 스택에 넣고 방문 처리를 한다. 방문하지 않은 인접 노드가 없으면 스택에서 최상단 노드를 꺼낸다.
 3. 2번의 과정을 더 이상 수행할 수 없을 때까지 반복한다.
+
+```typescript
+const V = 8;
+const graph: number[][] = [
+  [],
+  [2, 3, 8],
+  [1, 7],
+  [1, 4, 5],
+  [3, 5],
+  [3, 4],
+  [7],
+  [2, 6, 8],
+  [1, 7],
+];
+const visited = Array(V + 1).fill(false);
+
+function dfs(gr: number[][], start: number, vs: boolean[]) {
+  // 출발 노드를 스택에 넣고 방문 처리
+  const stack: number[] = [start];
+  vs[start] = true;
+  while (stack.length > 0) {
+    const now = stack.pop();
+    for (let i = 0; i < gr[now].length; i++) {
+      const next = gr[now][i];
+      if (!vs[next]) {
+        stack.push(next);
+        vs[next] = true;
+      }
+    }
+  }
+}
+
+dfs();
+```
 
 ## BFS (Breadth-First Search)
 
