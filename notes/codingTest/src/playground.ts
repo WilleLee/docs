@@ -1,5 +1,5 @@
 // shortest path
-
+/*
 const graph = [
   [],
   [
@@ -129,5 +129,69 @@ function dijkstra(start: number) {
 console.time("dijkstra");
 console.log(dijkstra(1));
 console.timeEnd("dijkstra");
+*/
 
-// floyd-warshall
+//
+const URL = "blh";
+const createConnection = (url: string) => ({
+  url,
+});
+
+class DB {
+  public instance: any;
+  static instance: any;
+  constructor(url: string) {
+    if (!DB.instance) {
+      DB.instance = createConnection(url);
+    }
+    return DB.instance;
+  }
+  connect() {
+    return this.instance;
+  }
+}
+
+const a = new DB(URL);
+const b = new DB(URL);
+
+console.log(a === b);
+
+class Vehicle {
+  private make: string;
+  private model: string;
+  constructor(make: string, model: string) {
+    this.make = make;
+    this.model = model;
+  }
+  display() {
+    console.log(`${this.make} ${this.model}`);
+  }
+}
+
+class Car extends Vehicle {
+  constructor(make: string, model: string) {
+    super(make, model);
+  }
+}
+class Truck extends Vehicle {
+  constructor(make: string, model: string) {
+    super(make, model);
+  }
+}
+
+function vehicleFactory(type: string, make: string, model: string) {
+  switch (type) {
+    case "car":
+      return new Car(make, model);
+    case "truck":
+      return new Truck(make, model);
+    default:
+      throw new Error("Invalid vehicle type");
+  }
+}
+
+const car1 = vehicleFactory("car", "Toyota", "Corolla");
+const truck1 = vehicleFactory("truck", "Ford", "F150");
+
+car1.display();
+truck1.display();
