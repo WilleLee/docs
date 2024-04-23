@@ -132,6 +132,7 @@ console.timeEnd("dijkstra");
 */
 
 //
+/*
 const URL = "blh";
 const createConnection = (url: string) => ({
   url,
@@ -195,3 +196,34 @@ const truck1 = vehicleFactory("truck", "Ford", "F150");
 
 car1.display();
 truck1.display();
+*/
+
+// revealing module pattern
+const counterModule = (function () {
+  let count = 0;
+
+  function increment() {
+    count++;
+  }
+
+  function decrement() {
+    count--;
+  }
+
+  function getCount() {
+    return count;
+  }
+
+  return {
+    increment,
+    decrement,
+    getCount,
+  };
+})();
+
+console.log(counterModule.getCount()); // 0
+counterModule.increment();
+counterModule.increment();
+console.log(counterModule.getCount()); // 2
+counterModule.decrement();
+console.log(counterModule.getCount()); // 1
