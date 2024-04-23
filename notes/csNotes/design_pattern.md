@@ -263,3 +263,33 @@ console.log(counterModule.getCount()); // 1
 > 즉시 실행 함수
 >
 > 함수를 정의하자마자 즉시 실행되는 함수
+
+### MVC 패턴(Model - View - Controller Pattern)
+
+![MVC pattern structure](https://github.com/WilleLee/docs/blob/main/assets/mvc_pattern_structure.jpeg?raw=true)
+
+#### 모델
+
+- 어플리케이션의 데이터, 즉 데이터베이스, 상수, 변수 등
+
+#### 뷰
+
+- UI 요소, 즉 모델을 기반으로 사용자가 볼 수 있는 화면
+
+#### 컨트롤러
+
+- 모델과 뷰를 잇는 메인 로직
+- 모델과 뷰의 변경사항을 전달받아 모델 및 뷰의 업데이트를 촉발
+
+### MVP 패턴(Model - View - Presenter Pattern)
+
+- MVC 패턴의 변형으로, 컨트롤러 대신 프레젠터가 모델과 뷰를 연결하는 패턴
+
+### MVVM 패턴(Model - View - ViewModel Pattern)
+
+- MVC 패턴의 변형으로, 뷰모델이 뷰와 모델을 연결하는 패턴
+- 뷰모델은 뷰를 더 추상화한 것이며, MVVM은 커맨드와 데이터 바인딩을 사용한다.
+
+> 데이터 바인딩
+>
+> 데이터와 UI 요소를 연결하는 것, 뷰모델을 변경하면 UI 요소(뷰)도 변경된다.
