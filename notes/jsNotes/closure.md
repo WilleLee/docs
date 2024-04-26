@@ -1,53 +1,25 @@
 # closure
 
-## What is closure?
+MDN 정의에 따르면, 클로저는 ["함수와 그 함수가 선언된 렉시컬 환경의 조합"](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures)이다. 여기서 먼저 이해해야 할 핵심 키워드는 "함수가 선언된 렉시컬 환경"이다.
 
-- 클로저는 함수와 함수가 선언된 어휘적 환경의 조합이다.
-- 클로저는 함수가 생성될 당시의 외부 변수를 기억한다.
+## 렉시컬 스코프
 
-## Why do we need closure?
-
-- 클로저는 함수가 생성될 당시의 외부 변수를 기억하기 때문에, 함수가 생성된 이후에도 외부 변수에 접근할 수 있다.
-- 이러한 특성을 이용하여 private 변수를 사용할 수 있다.
+자바스크립트 엔진은 함수를 어디서 호출했는지가 아니라 **함수를 어디에 정의했는지**에 따라 상위 스코프를 결정한다. 이를 **렉시컬 스코프** 혹은 **정적 스코프**라고 한다.
 
 ```javascript
-function sayHi(name) {
-  let _name = name;
-  return function () {
-    console.log(`Hi, my name is ${_name}.`);
-  };
+const x = 1;
+
+function foo() {
+  const x = 10;
+  bar();
 }
 
-const sayHiToWille = sayHi("Wille");
-sayHiToWille(); // Hi, my name is Wille.
-sayHiToWille._name; // undefined
+function bar() {
+  console.log(x);
+}
+
+foo(); // 1
+bar(); // 1
 ```
 
-```javascript
-var i;
-for (i = 0; i < 5; i++) {
-  setTimeout(function () {
-    console.log(i);
-  }, 100);
-}
-// 5 5 5 5 5
-/*
-lexical environment
-i: 5
-*/
-
-var j;
-for (j = 0; j < 5; j++) {
-  (function (k) {
-    setTimeout(function () {
-      console.log(k);
-    }, 100);
-  })(j);
-}
-// 0 1 2 3 4
-/*
-lexical environment
-j: 5
-k: 0 1 2 3 4
-*/
-```
+위 코드에서 `bar` 함수와 `foo` 함수는 모두 전역에서 정의되었다. 함수의 상위 소크프(렉시컬 환경의 외부 렉시컬 환경 참조)는 함수를 어디서 정의했느냐에 따라 결정되므로, `foo` 함수와 `bar` 함수의 상위 스코프는 전역 스코프이다. 따라서 `bar` 함수는 `foo` 함수 내부에서 호출되었더라도 `foo` 함수의 렉시컬 환경을 참조하지 않고 전역 스코프를 참조한다.
