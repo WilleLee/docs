@@ -227,3 +227,106 @@ counterModule.increment();
 console.log(counterModule.getCount()); // 2
 counterModule.decrement();
 console.log(counterModule.getCount()); // 1
+
+// floyd warshall
+const INF = Infinity;
+
+const N = 4; // 노드의 개수
+const inputs: [number, number, number][] = [
+  [1, 2, 4],
+  [1, 4, 6],
+  [2, 1, 3],
+  [2, 3, 7],
+  [3, 1, 5],
+  [3, 4, 4],
+  [4, 3, 2],
+];
+
+const distance: number[][] = Array(N + 1)
+  .fill([])
+  .map(() => Array(N + 1).fill(INF));
+
+for (let i = 1; i <= N; i++) {
+  for (let j = 1; j <= N; j++) {
+    if (i === j) {
+      distance[i][j] = 0;
+    }
+  }
+}
+
+for (let i = 0; i < inputs.length; i++) {
+  const [a, b, d] = inputs[i];
+  distance[a][b] = d;
+}
+
+for (let k = 1; k <= N; k++) {
+  for (let a = 1; a <= N; a++) {
+    for (let b = 1; b <= N; b++) {
+      const min = Math.min(distance[a][b], distance[a][k] + distance[k][b]);
+      console.log(min);
+      distance[a][b] = min;
+    }
+  }
+}
+
+console.log("distance", distance);
+
+const city = 5;
+const buses: [number, number, number][] = [
+  [1, 2, 2],
+  [1, 3, 3],
+  [1, 4, 1],
+  [1, 5, 10],
+  [2, 4, 2],
+  [3, 4, 1],
+  [3, 5, 1],
+  [4, 5, 3],
+  [3, 5, 10],
+  [3, 1, 8],
+  [1, 4, 2],
+  [5, 1, 7],
+  [3, 4, 2],
+  [5, 2, 4],
+];
+
+const costs: number[][] = Array(city + 1)
+  .fill([])
+  .map(() => Array(city + 1).fill(INF));
+
+for (let a = 1; a <= city; a++) {
+  for (let b = 1; b <= city; b++) {
+    if (a === b) {
+      costs[a][b] = 0;
+    }
+  }
+}
+
+for (let i = 0; i < buses.length; i++) {
+  const [a, b, cost] = buses[i];
+  const currentCost = costs[a][b];
+  costs[a][b] = Math.min(cost, currentCost);
+}
+
+for (let k = 1; k <= city; k++) {
+  for (let a = 1; a <= city; a++) {
+    for (let b = 1; b <= city; b++) {
+      const min = Math.min(costs[a][b], costs[a][k] + costs[k][b]);
+      costs[a][b] = min;
+    }
+  }
+}
+
+for (let i = 1; i <= city; i++) {
+  let answer = "";
+  for (let j = 1; j <= city; j++) {
+    if (costs[i][j] === INF) {
+      answer += "0";
+    } else {
+      answer += String(costs[i][j]);
+    }
+    if (j !== city) {
+      answer += " ";
+    }
+  }
+  console.log(answer);
+}
