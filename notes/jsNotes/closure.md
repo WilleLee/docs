@@ -107,3 +107,37 @@ console.log(counter.increase()); // 2
 console.log(counter.decrease()); // 1
 console.log(counter.decrease()); // 0
 ```
+
+## 자주 발생하는 실수 (`var` vs `let`)
+
+`var` 키워드로 생성한 변수는 블록 레벨 스코프가 아닌 함수 레벨 스코프만을 갖는다. 따라서 `var` 키워드로 생성한 `for` 반복문은 동일한 변수를 참조하게 되어 의도치 않은 결과를 초래할 수 있다.(함수 -> `for` 문 초기화 렉시컬 환경 -> 전역 렉시컬 환경)
+
+```javascript
+var funcs = [];
+
+for (var i = 0; i < 3; i++) {
+  funcs[i] = function () {
+    return i;
+  };
+}
+
+for (var j = 0; j < funcs.length; j++) {
+  console.log(funcs[j]()); // 3 3 3
+}
+```
+
+하지만 `let` 키워드로 선언한 변수는 블록 레벨 스코프를 갖기 때문에, 각 변수 값마다 별도의 렉시컬 환경이 생성된다.(함수 -> 해당 반복 블록의 렉시컬 환경 -> ... -> `for` 문 초기화 렉시컬 환경 -> 전역 렉시컬 환경)
+
+```javascript
+var funcs = [];
+
+for (let i = 0; i < 3; i++) {
+  funcs[i] = function () {
+    return i;
+  };
+}
+
+for (let j = 0; j < funcs.length; j++) {
+  console.log(funcs[j]()); // 0 1 2
+}
+```
