@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { Route, Routes } from "react-router-dom";
-import StartPage from "./pages";
 import { Global, css } from "@emotion/react";
+import StartPage from "@pages/index";
 
 function App() {
   return (

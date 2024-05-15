@@ -26,6 +26,8 @@
     /* paths */
     "baseUrl": "./src",
     "paths": {
+      "@models/*": ["models/*"],
+      "@pages/*": ["pages/*"],
       "@/*": ["*"]
     }
   },
