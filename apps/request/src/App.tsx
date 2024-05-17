@@ -7,10 +7,11 @@ import FetchPage from "@pages/FetchPage";
 import FetchAsyncPage from "@pages/FetchAsyncPage";
 import UseTransitionPage from "@pages/UseTransitionPage";
 import FetchErrorPage from "@pages/FetchErrorPage";
+import { GlobalPortal } from "./GlobalPortal";
 
 function App() {
   return (
-    <>
+    <GlobalPortal.Provider>
       <Routes>
         <Route path="/" element={<StartPage />} />
         <Route path="/xml" element={<XmlPage />} />
@@ -20,7 +21,7 @@ function App() {
         <Route path="/usetransition" element={<UseTransitionPage />} />
         <Route path="/fetcherror" element={<FetchErrorPage />} />
       </Routes>
-    </>
+    </GlobalPortal.Provider>
   );
 }
 
