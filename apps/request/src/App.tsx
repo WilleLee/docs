@@ -1,5 +1,4 @@
 import { Route, Routes } from "react-router-dom";
-import "./App.css";
 import StartPage from "./pages";
 import XmlPage from "@pages/XmlPage";
 import XmlPromisePage from "@pages/XmlPromisePage";
@@ -11,6 +10,8 @@ import { GlobalPortal } from "./GlobalPortal";
 import FetchPromiseAllPage from "@pages/FetchPromiseAllPage";
 import WithoutPromiseAllPage from "@pages/WithoutPromiseAllPage";
 import PlaygroundPage from "@pages/PlaygroundPage";
+import TestPage from "@pages/TestPage";
+import TodoPage from "@pages/TestPage/TodoPage";
 
 function App() {
   return (
@@ -26,6 +27,8 @@ function App() {
         <Route path="/usetransition" element={<UseTransitionPage />} />
         <Route path="/fetcherror" element={<FetchErrorPage />} />
         <Route path="/playground" element={<PlaygroundPage />} />
+        <Route path="/test" element={<TestPage />} />
+        <Route path="/test/:todoId" element={<TodoPage />} />
       </Routes>
     </GlobalPortal.Provider>
   );
