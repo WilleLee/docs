@@ -19,6 +19,7 @@ export default function StartPage() {
         <button onClick={() => push("/usetransition")}>use transition</button>
         <button onClick={() => push("/fetcherror")}>fetch error</button>
         <button onClick={() => push("/playground")}>playground</button>
+        <button onClick={() => push("/swr")}>swr</button>
         <button onClick={() => push("/test")}>test</button>
       </div>
     </Fragment>

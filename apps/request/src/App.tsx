@@ -12,6 +12,7 @@ import WithoutPromiseAllPage from "@pages/WithoutPromiseAllPage";
 import PlaygroundPage from "@pages/PlaygroundPage";
 import TestPage from "@pages/TestPage";
 import TodoPage from "@pages/TestPage/TodoPage";
+import SwrPage from "@pages/SwrPage";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
         <Route path="/usetransition" element={<UseTransitionPage />} />
         <Route path="/fetcherror" element={<FetchErrorPage />} />
         <Route path="/playground" element={<PlaygroundPage />} />
+        <Route path="/swr" element={<SwrPage />} />
         <Route path="/test" element={<TestPage />} />
         <Route path="/test/:todoId" element={<TodoPage />} />
       </Routes>
