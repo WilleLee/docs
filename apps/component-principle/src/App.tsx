@@ -14,6 +14,7 @@ function App() {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            line-height: 1.5;
           }
           h1,
           h2,

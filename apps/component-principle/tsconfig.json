@@ -5,6 +5,8 @@
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
+    "allowJs": true,
+    "types": ["node"],
 
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -24,6 +26,7 @@
 
     "baseUrl": "./src",
     "paths": {
+      "@libs/*": ["libs/*"],
       "@constants/*": ["constants/*"],
       "@pages/*": ["pages/*"],
       "@/*": ["*"]
