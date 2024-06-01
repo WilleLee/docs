@@ -5,12 +5,28 @@ import { Posts } from "./Posts";
 
 export default function StartPage() {
   // 양쪽으로 todos와 posts를 보여줄 거야
+
+  // 1. single responsibility state management
   // 두 개의 상태를 관리할 것이므로, 두 개의 컨트롤러 함수 필요
   return (
     <Layout>
       <>
         <Suspense fallback={<p>loading...</p>}>
-          <Todos.Controller>{() => <></>}</Todos.Controller>
+          <Todos.Controller>
+            {({ todos, onAddTodo, onRemoveTodo, onToggleCompleted }) => (
+              <>
+                <Todos.TodoHeaderView onAddTodo={onAddTodo} />
+                {todos.map((todo) => (
+                  <Todos.TodoView
+                    key={todo.id}
+                    todo={todo}
+                    onRemoveTodo={onRemoveTodo}
+                    onToggleCompleted={onToggleCompleted}
+                  />
+                ))}
+              </>
+            )}
+          </Todos.Controller>
         </Suspense>
         <Suspense fallback={<p>loading...</p>}>
           <Posts.Controller>{() => <></>}</Posts.Controller>
