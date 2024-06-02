@@ -13,8 +13,16 @@ import PlaygroundPage from "@pages/PlaygroundPage";
 import TestPage from "@pages/TestPage";
 import TodoPage from "@pages/TestPage/TodoPage";
 import SwrPage from "@pages/SwrPage";
+import NprogressPage from "@pages/NprogressPage";
+import { useEffect } from "react";
+import nProgress from "nprogress";
 
 function App() {
+  useEffect(() => {
+    return () => {
+      nProgress.remove();
+    };
+  }, []);
   return (
     <GlobalPortal.Provider>
       <Routes>
@@ -29,6 +37,7 @@ function App() {
         <Route path="/fetcherror" element={<FetchErrorPage />} />
         <Route path="/playground" element={<PlaygroundPage />} />
         <Route path="/swr" element={<SwrPage />} />
+        <Route path="/nprogress" element={<NprogressPage />} />
         <Route path="/test" element={<TestPage />} />
         <Route path="/test/:todoId" element={<TodoPage />} />
       </Routes>

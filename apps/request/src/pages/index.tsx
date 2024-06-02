@@ -1,8 +1,15 @@
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import useNav from "@hooks/useNav";
+import nProgress from "nprogress";
 
 export default function StartPage() {
   const { push } = useNav();
+  useEffect(() => {
+    nProgress.start();
+    setTimeout(() => {
+      nProgress.done();
+    }, 1000);
+  }, []);
   return (
     <Fragment>
       <div>
@@ -20,6 +27,7 @@ export default function StartPage() {
         <button onClick={() => push("/fetcherror")}>fetch error</button>
         <button onClick={() => push("/playground")}>playground</button>
         <button onClick={() => push("/swr")}>swr</button>
+        <button onClick={() => push("/nprogress")}>nprogress</button>
         <button onClick={() => push("/test")}>test</button>
       </div>
     </Fragment>
