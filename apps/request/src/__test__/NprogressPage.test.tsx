@@ -1,9 +1,20 @@
 import { GlobalPortal } from "@/GlobalPortal";
 import NprogressPage from "@pages/NprogressPage";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import * as usePosts from "@pages/NprogressPage/usePosts";
+import userEvent from "@testing-library/user-event";
+
+const mockPush = vi.fn();
+
+vi.mock("@hooks/useNav", () => {
+  return {
+    default: () => ({
+      push: mockPush,
+    }),
+  };
+});
 
 function init() {
   const { unmount } = render(<NprogressPage />, {
@@ -59,6 +70,21 @@ describe("NprogressPage", () => {
     expect(refreshButton).toHaveLength(1);
     const errorMessage = screen.getAllByTestId("error_message");
     expect(errorMessage[0].innerHTML).toStrictEqual("error message");
+    unmount();
+  });
+  test("should call push when clicking the post box", async () => {
+    vi.spyOn(usePosts, "default").mockReturnValue({
+      posts: [{ id: 1, userId: 33, title: "title1", body: "body1" }],
+      isLoading: false,
+      isError: false,
+      error: undefined,
+    });
+    const { unmount } = init();
+    const postBox = screen.getByTestId("post_container");
+    await userEvent.click(postBox);
+    await waitFor(async () => {
+      expect(mockPush.mock.calls[0][0]).toStrictEqual("/nprogress/1");
+    });
     unmount();
   });
 });
