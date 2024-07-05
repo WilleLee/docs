@@ -1,5 +1,4 @@
 import axios from "axios";
-import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
