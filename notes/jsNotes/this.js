@@ -107,6 +107,7 @@ const obj = {
 obj.foo();
 */
 
+/*
 const person = {
   name: "Lee",
   getName() {
@@ -127,3 +128,23 @@ console.log(anotherPerson.getName()); // getName 메서드를 호출한 객체 =
 const getName = person.getName;
 
 console.log(getName());
+*/
+
+const person = {
+  name: "Lee",
+  foo(callback) {
+    setTimeout(callback.bind(this), 100);
+  },
+};
+
+/*
+person.foo(function () {
+  console.log(`My name is ${this.name}.`);
+}); // My name is Lee.
+*/
+
+const { foo } = person;
+
+foo(function () {
+  console.log(`My name is ${this.name}.`);
+});

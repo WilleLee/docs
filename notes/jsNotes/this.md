@@ -134,6 +134,79 @@ console.log(getName()); // getName 메서드를 호출한 객체 = global object
 
 `person` 객체의 `getName` 프로퍼티가 가리키는 함수 객체는 `person` 객체와는 별도로 존재하는 함수 객체이며, `getName` 프로퍼티는 단지 그 함수 객체를 가리키고 있을 뿐이다.
 
+![this of getName example](https://github.com/WilleLee/docs/blob/main/assets/this_get_name_ex.jpeg?raw=true)
+
 ### 3. 생성자 함수 호출
 
+생성자 함수 내부의 `this`에는 생성자 함수가 미래에 생성할 인스턴스가 바인딩된다.
+
+```javascript
+function Circle(radius) {
+  this.radius = radius;
+  this.getDiameter = function () {
+    return 2 * this.radius;
+  };
+}
+
+const circle1 = new Circle(5);
+const circle2 = new Circle(10);
+
+console.log(circle1.getDiameter()); // 10
+console.log(circle2.getDiameter()); // 20
+```
+
+만약 `new` 연산자를 사용하지 않으면, 생성자 함수가 아닌 일반 함수로 동작한다.
+
+```javascript
+// ...
+
+const circle3 = Circle(15); // 일반 함수로 호출
+console.log(circle3); // undefined
+console.log(radius); // 15
+```
+
 ### Function.prototype.apply/call/bind 메서드에 의한 간접 호출
+
+#### apply와 call
+
+`Function.prototype.apply`와 `Function.prototype.call` 메서드는 `this`로 사용할 객체와 인수 리스트를 인수로 전달받아 함수를 "호출"한다. 이때 `apply`는 인수 리스트를 배열로, `call`은 인수 리스트를 쉼표로 구분한 리스트로 전달한다.
+
+```javascript
+Function.prototype.apply(thisArg[, argsArray]);
+Function.prototype.call(thisArg[, arg1, arg2, ...]);
+```
+
+```javascript
+function getThisBinding() {
+  console.log(arguments);
+  return this;
+}
+
+const thisArg = { a: 1 }; // this로 사용할 객체
+
+console.log(getThisBinding()); // global object
+
+console.log(getThisBinding.apply(thisArg, [1, 2, 3]));
+// Arguments(3) [1, 2, 3]
+// { a: 1 }
+console.log(getThisBinding.call(thisArg, 1, 2, 3));
+// Arguments(3) [1, 2, 3]
+// { a: 1 }
+```
+
+#### bind
+
+`Function.prototype.bind` 메서드는 함수를 곧바로 호출하지는 않지만, 첫 번째 인수로 전달한 값으로 `this`를 설정한 새로운 함수를 반환한다.
+
+```javascript
+const person = {
+  name: "Lee",
+  foo(callback) {
+    setTimeout(callback.bind(this), 100);
+  },
+};
+
+person.foo(function () {
+  console.log(`My name is ${this.name}.`);
+}); // My name is Lee.
+```
