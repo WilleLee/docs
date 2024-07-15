@@ -14,3 +14,7 @@
 ✅ 찾아보니 GitHub Personal Access Token을 이용하여 인증하는 방법이 권장되고 있었다. 아래 글을 참고하여 access token을 발급받고, 결과적으로는 푸시 테스트를 성공하였다.
 
 - [Github Personal Access Token](https://shortcuts.tistory.com/12)
+
+❗️ 디렉터리는 지스트에 푸시할 수 없다!
+
+✅ 디렉터리를 가진 구조로 지스트에 푸시를 시도하였으나, 지스트에는 파일만 푸시할 수 있다는 사실을 알게 되었다. 이에 따라 구조를 변경하고 필수 디렉터리는 `.gitignore`에 포함시켜 푸시하였다.
