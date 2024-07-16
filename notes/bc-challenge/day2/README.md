@@ -12,6 +12,48 @@ SSH(Secure Shell)는 원격의 쉘에 접속하기 위한 네트워크 프로토
 
 SSH 서버를 구성하기 위해 다양한 패키지가 사용될 수 있는데, 이 중 `OpenSSH`가 가장 널리 사용된다. 기본 포트는 22번이다.
 
+### ubuntu에서 ssh 설정
+
+`openssh-server` 패키지를 설치
+
+```bash
+$ sudo apt install openssh-server
+```
+
+`ssh` 실행 상태 확인
+
+```bash
+$ sudo systemctl status ssh
+```
+
+방화벽 확인 및 설정
+
+```bash
+$ sudo ufw status
+$ sudo ufw allow ssh
+$ sudo ufw reload
+```
+
+### 클라이언트 로컬 컴퓨터에서 원격 접속
+
+```bash
+$ ssh <계정명>@<서버 IP 주소>
+```
+
+## ubuntu에서 계정 생성 및 비밀번호 설정
+
+계정 생성
+
+```bash
+$ adduser <계정명>
+```
+
+비밀번호 설정
+
+```bash
+$ passwd <계정명>
+```
+
 ## 디렉터리 접근 권한
 
 리눅스는 여러 사람이 사용할 수 있는 멀티유저 운영체제이기 때문에, 자료 접근에 있어서 보안상의 문제가 발생할 수 있다. 이러한 문제를 해결하기 위해 리눅스에는 *권한*이라는 개념이 존재한다. 권한은 사용자, 그룹, 기타 사용자에 대해 읽기, 쓰기, 실행의 권한을 설정할 수 있다.
