@@ -35,7 +35,7 @@ lexer는 tokenizer가 생성한 토큰을 다양한 타입으로 분류하는 �
 
 ### parser
 
-parser는 lexer의 결과물을 받아 abstract syntax tree(AST)나 document object model(DOM)과 같은 구조를 생성한다.
+parser는 lexer의 결과물(lexemes)을 받아 abstract syntax tree(AST)나 document object model(DOM)과 같은 구조를 생성한다.
 
 - 인풋 : `[TagStart("key"), Text("CFBundleExecutable"), TagEnd("key")]`
 - 아웃풋 : 문서를 나타내는 트리 구조
