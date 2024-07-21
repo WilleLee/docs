@@ -1,4 +1,4 @@
-# Boostcamp Challenge Day 4: 프로세스 메모리의 구조와 관리
+# 프로세스 메모리의 구조와 관리
 
 이번 학습 정리에서는 메모리 관리에 대해 Deepu Sasidharan가 연재한 글들의 일부를 요약/번역 및 정리하였다.
 
@@ -69,3 +69,129 @@
 -->
 
 ## [V8 엔진 메모리 관리의 시각화](https://deepu.tech/memory-management-in-v8/)
+
+(...) 여기서는 ECMAScript와 WebAssembly 코드를 실행하는 V8 엔진의 메모리 관리에 대해 알아본다. V8 엔진은 NodeJS, Deno, Electron 같은 런타임 및 Chrome, Chromium, Bravo, Opera, Edge 같은 웹 브라우저에서 사용된다. 자바스크립트는 인터프리터 언어이기 때문에 코드를 해석하고 실행하기 위한 엔진을 필요로 한다. V8 엔진은 자바스크립트를 해석하여 네이티브 머신 코드로 컴파일한다. 이러한 V8은 C++로 작성되었으며, 모든 C++ 어플리케이션에 임베드될 수 있다.
+
+### V8 메모리 구조
+
+우선 V8 엔진의 메모리 구조를 살펴보자. 자바스크립트는 싱글 스레드 언어이므로, V8 또한 자바스크립트 컨텍스트별로 하나의 프로세스를 사용한다. (...) 실행 중인 프로그램은 항상 V8 프로세스 내에 할당된 메모리들로 표현되는데, 이를 **레지던트 셋**(resident set)이라고 하고, 레지던트 셋은 다시 아래와 같은 세그먼트들로 나뉜다.
+
+![resident set for v8](https://i.imgur.com/kSgatSL.png)
+
+#### 힙 메모리
+
+V8 엔진은 객체나 동적인 데이터를 힙 메모리에 저장한다. 이는 메모리 영역 중 가장 큰 블록이며, 여기에서 **가비지 컬렉션**(GC)이 이루어진다. 이때 모든 힙 메모리 영역이 카비지 컬렉션 대상인 것은 아니고, Young/Old 공간이 가비지 컬렉션의 대상이 된다. 이러한 힙은 다시 아래와 같이 나뉜다.
+
+- **New Space**: New Space 내지 **Young Generation**에는 새로운 객체들이 존재하고, 이러한 객체 중 대부분은 빠르게 생성되고 제거된다(short-lived). 이러한 New Space는 크기가 작고, 두 개의 **semi-space**를 가진다. New Space는 **Scavenge**(**Minor GC**)에 의해 관리되며, New Space의 크기는 `--min_semi_space_size`(초기 크기)와 `--max_semi_space_size`(최대 크기) V8 플래크로 제어할 수 있다.
+- **Old Space**: Old Space 내지 **Old Generation**에는 New Space에 저장되었다가 두 개의 Minor GC 사이클을 거쳐 살아남은 객체들이 옮겨진다. Old Space는 **Major GC**(**Mark-Sweep and Mark-Compact**)에 의해 관리되며, Old Space의 크기는 `--initial_old_space_size`(초기 크기)와 `--max_old_space_size`(최대 크기) V8 플래그로 제어할 수 있다. Old Space는 두 가지로 나뉜다.
+  - **Old Pointer Space**: 다른 객체들을 가리키는 객체들을 저장
+  - **Old Data Space**: 다른 객체를 가리키는 포인터가 아닌 데이터를 저장하는 객체들을 저장
+- **Large Object Space**: 다른 공간들의 크기 제한을 초과하는 객체들을 저장한다. 이러한 큰 객체들은 가비지 컬렉션의 대상이 되지 않는다.
+- **Code Space**: **Just In Time**(JIT) 컴파일러가 컴파일된 코드 블록을 이곳에 저장한다.
+- **Cell Space**, **Property Cell Space**, **Map Space**: 순서대로 `Cells`, `PropertyCells`, `Maps`를 저장한다. 각 공간은 동일한 크기의 객체들을 저장하고, 어떤 종류의 객체를 가리킬지에 대한 제약을 가진다.
+
+#### 스택
+
+스택 메모리 영역으로, 각 V8 프로세스는 하나의 스택을 갖는다. 스택은 메서드/함수 프레임, 프리미티브 값, 객체 포인터를 포함한 정적인 데이터를 저장한다. 스택 메모리의 크기 제한은 `--stack_size` V8 플래그로 제어할 수 있다.
+
+##### V8 메모리 사용 (스택 vs 힙)
+
+메모리가 어떻게 구성되는지 알게 되었으므로, 이제 프로그램이 실행될 때 메모리의 가장 중요한 부분들이 어떻게 사용되는지 알아보자.
+
+아래 자바스크립트 프로그램을 이용해보자.
+
+```javascript
+class Employee {
+  constructor(name, salary, sales) {
+    this.name = name;
+    this.salary = salary;
+    this.sales = sales;
+  }
+}
+
+const BONUS_PERCENTAGE = 10;
+
+function getBonusPercentage(salary) {
+  const percentage = (salary * BONUS_PERCENTAGE) / 100;
+  return percentage;
+}
+
+function findEmployeeBonus(salary, noOfSales) {
+  const bonusPercentage = getBonusPercentage(salary);
+  const bonus = bonusPercentage * noOfSales;
+  return bonus;
+}
+
+let john = new Employee("John", 5000, 5);
+john.bonus = findEmployeeBonus(john.salary, john.sales);
+console.log(john.bonus);
+```
+
+- **전역 스코프**는 스택의 "전역 프레임"(Global Frame)에 저장된다.
+- 모든 함수 호출은 하나의 프레임 블록으로 스택 메모리에 추가된다.
+- `arguments`나 반환값을 포함한 모든 로컬 변수들은 스택 내 함수 프레임 블록 안에 저장된다.
+- 모든 프리미티브 타입은 스택에 직접적으로 저장된다. 이는 전역 스코프에도 적용된다.
+- `Emplyee`나 `Function` 같은 객체 타입은 모두 힙에 생성되고, 스택 포인터를 통해 스택에서 참조된다. 자바스크립트에서 함수들은 객체에 불과하다. 또 이는 전역 스코프에도 적용된다.
+- 현재 함수 프레임으로부터 호출된 함수들은 스택의 상단에 푸시된다.
+- 함수가 반환하면, 해당 함수 프레임은 스택에서 제거된다.
+- 메인 프로세스가 종료되고나면, 힙의 모든 객체들은 스택으로부터 어떠한 포인터도 가지지 않게 되어, 부모가 없는 상태가 된다.
+- 복사본을 명시적으로 만들지 않는 이상, 모든 객체 참조는 참조 포인터를 이용한다.
+
+스택은 자동으로 관리되고, 이는 V8 자체에 의해서라기보다는 운영 체제에 의해 이루어진다. 따라서 스택과 관련해서는 개발자가 크게 신경 쓸 필요가 없다. 반면 힙은 운영 체제에 의해 자동으로 관리되지 않으며, 가장 큰 메모리 공간이고 동적인 데이터를 가진다는 점에서 힙은 기하급수적으로 커져 프로그램의 메모리 초과 현상을 초래할 수 있다. 힙은 또한 프래그먼테이션되어 어플리케이션을 느리게할 수 있다. 그렇기에 가비지 컬렉션은 힙 메모리를 관리하는 데 중요하다.
+
+힙에서 포인터와 데이터를 구분하는 것은 가비지 컬렉션을 위해 중요하며, V8은 "**태그드 포인터**"(**Tagged Pointers**) 접근법을 사용한다. 이는 각 단어 뒤에 비트를 추가하여, 해당 단어가 포인터인지 데이터인지를 구분한다. 이러한 접근법은 제한된 컴파일러 지원을 필요로 하기는 하지만, 간단히 구현 가능하다.
+
+### V8 메모리 관리: 가비지 컬렉션
+
+V8이 어떻게 메모리를 할당하는지 알게 되었으니, 이제 V8이 어떻게 힙 메모리를 자동으로 관리하는지 알아보자. 프로그램이 사용 가능한 것보다 더 많은 메모리를 힙에 할당하려 하면 **아웃 오브 메모리 에러**가 발생하고, 올바르지 않게 관리된 힙은 메모리 누수를 초래할 수도 있다.
+
+V8은 가비지 컬렉션을 통해 힙 메모리를 관리한다. 간단히 말하자면 가비지 컬렉션은 스택으로부터 직접적으로든 간접적으로든 더 이상 참조되지 않는 객체들이 사용하는 메모리를 해제하여 새로운 객체를 생성할 공간을 만든다.
+
+#### Minor GC (Scavenger)
+
+> **scavenge**
+>
+> (먹을 것 등을 찾아) 쓰레기 더미를 뒤지다
+>
+> ... **scavenger**
+>
+> 쓰레기 더미를 뒤지는 사람/동물
+
+Minor GC는 New Space를 컴팩트하고 깨끗하게 유지한다. 객체들은 아주 작은(1 ~ 8 MB) New Space에 할당된다. New Space 할당은 매우 값싼 동작으로, 새로운 객체를 위해 공간을 예약할 때마다 할당 포인터를 증가시킨다. 만약 할당 포인터가 새로운 공간의 끝에 도달하면, Minor GC가 촉발된다. 이 프로세스는 scavenger라고도 불리며, *Cheney's algorithm*을 사용한다.
+
+이제 Minor GC가 어떻게 작동하는지 알아보자.
+
+#### Major GC
+
+New Space는 같은 크기를 가진 두 개의 semi-space로 나뉜다. 이들은 **to-space**와 **from-space**로 불린다. 대부분의 할당은 from-space에서 이루어지며(항상 Old Space에 할당되는 실행가능한 코드들 같은 객체들은 제외), from-space가 가득 차면 Major GC가 촉발된다.
+
+1. from-space에 이미 `01` ~ `06`의 블록이 "used memory"로 표시되어 있다고 해보자.
+2. 프로세스가 새로운 객체(`07`)을 생성한다.
+3. V8은 from-space에서 필요한 메모리 공간을 찾으려 한다. 하지만 from-space에 사용 가능한 free space가 없다. 따라서 V8은 Minor GC를 실행한다.
+4. Minor GC는 스택 포인터(GC 루트)에서 시작하여 재귀적으로 객체 그래프를 탐색하여 현재 사용되고 있거나 살아있는 객체들(used memory)을 찾는다. 이 객체들은 to-space로 옮겨진다. 해당 객체들에 의해 참조되는 객체들 또한 to-space로 옮겨지고, 그들의 포인터는 업데이트된다. 이러한 과정은 from-space의 모든 객체들이 탐색될 때까지 반복된다. 과정의 끝에 to-space는 프래그먼테이션을 줄여 자동으로 컴팩트된다.
+5. 아제 Minor GC는 from-space를 비운다.
+6. Minor GC는 to-space와 from-space를 교체한다. 그러면 모든 객체들은 from-space에 위치하고, to-space는 빈 상태가 된다.
+7. V8은 새로운 객체를 from-space에 할당한다.
+8. 일정 시간이 지나 `07` ~ `09` 객체들이 from-space에 추가되었다고 해보자. (`01`, `03`, `05`, `07`, `08`, `09`)
+9. 어플리케이션이 새로운 객체 `10`을 생성한다.
+10. V8은 from-space에서 필요한 메모리 공간을 찾으려 한다. 하지만 from-space에 사용 가능한 free space가 없다. 따라서 V8은 두 번째 Minor GC를 실행한다.
+11. 위의 프로세스가 반복되며, 두 번째 Minor GC 후 살아남은 객체들은 Old Space로 옮겨진다(`01`, `05` -> Old Space). 처음 살아남은 객체들은 to-space로 옮겨지고(`07`, `09` -> to-space), from-space는 비워진다.
+12. Minor GC는 to-space와 from-space를 교체한다. 그러면 모든 객체들은 from-space에 위치하고, to-space는 빈 상태가 된다.
+13. 새로운 객체가 from-space에 할당된다.
+
+#### Major GC
+
+Major GC는 Old Space를 컴팩트하고 깨끗하게 유지한다. Major GC는 V8 엔진이 충분한 Old Space가 존재하지 않다고 판단할 때 실행된다.
+
+Scavenger 알고리듬은 작은 크기의 데이터를 처리하는 데 효과적이지만, 크기가 큰 힙의 경우에는 비효율적이다. 그렇기에 Major GC는 Mark-Sweep-Compact 알고리듬을 사용한다. 이 알고리듬은 세 가지 색상(white, grey, black)으로 마킹하는 시스템을 이용한다. 따라서 Major GC는 세 가지 스텝으로 이루어지고, 세 번째 스텝은 프래그먼테이션 분석에 의존한다.
+
+- **marking**: 가비지 컬렉터가 어떤 객체가 사용 중이고, 어떤 객체가 그렇지 않은지를 판단한다. 사용 중이거나 GC 루트(스택 포인터)로부터 접근할 수 있는 객체들은 재귀적으로 살아있는 것으로 마킹된다. 이는 힙을 DFS로 탐색한다.
+- **sweeping**: 가비지 컬렉터가 힙을 횡단하여 살아있는 것으로 마킹되지 않은 객체들의 메모리 주소에 대한 노트를 만든다. 해당 공간은 사용 가능한 공간으로 마킹되고, 다른 객체를 저장하는 데 사용할 수 있다.
+- **compacting**: sweeping 이후 필요하다면 모든 살아남은 객체들이 메모리의 한쪽으로 이동된다. 이는 프래그먼테이션을 줄이고, 메모리 할당 퍼포먼스를 향상시킨다.
+
+Major GC의 프로세스를 살펴보자.
+
+1. 많은 Minor GC 사이클을 거친 후, Old Space가 거의 가득 차, V8이 Major GC를 실행해야 한다고 판단했다고 해보자.
+2. Major GC는 스택 포인터에서 시작하여 객체를 재귀적으로 횡단한다. 이로써 사용 중인 객체를 살아있는 것(used memory)으로 마킹하고, 남은 객체를 가비지로 마킹한다.
+3. 동시적인 마킹이 종료되거나 메모리 한계에 도달하면, GC는 메인 스레드를 통해 마킹 마무리 단계로 들어간다.
+4. 이제 Major GC는 모든 부모 없는 객체들의 메모리를 free memory로 마킹한다. 평행한 컴팩팅 작업도 촉발되어, 메모리의 상호 연관된 블록들이 같은 페이지로 이동되어 프래그먼테이션을 줄인다. 이러한 과정에서 포인터는 업데이트된다.
