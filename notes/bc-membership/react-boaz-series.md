@@ -20,6 +20,8 @@
 
 가상 DOM은 `current` 트리와 `workInProgress` 트리의 더블 버퍼링 구조로 되어 있으며, `createRoot()`로 생성한 루트 노드는 current 트리를 가리키고, 각 트리의 서로 대칭되는 노드들은 서로를 상호 참조한다.
 
+![douch buffering of the react virtual dom](https://github.com/WilleLee/docs/blob/main/assets/virtual-dom-two-way-buffer.png?raw=true)
+
 `React`가 가상 DOM을 구성하고 실제 DOM API를 호출하여 화면을 다시 그리는 작업은 몇 가지 단계를 거쳐 수행된다.
 
 - 렌더 phase
